@@ -15,6 +15,7 @@ provider:
 
 custom:
   todoTableName: todo-table-${self:provider.stage}
+  ##### Uncomment below for local dev
   # dynamodb:
   #   stages:
   #     - dev
@@ -26,80 +27,42 @@ custom:
 
 plugins:
   - serverless-iam-roles-per-function
+  ##### Uncomment below for local dev
   # - serverless-dynamodb-local
   # - serverless-offline
 
 functions:
-  getAllTodos:
+  mainHandler:
     handler: index.handler
     name: handler
     memorySize: 128 # mb
     timeout: 5 # seconds
     events:
-      - http:
+      - http: ## Get all todos
           path: todos/
           method: GET
-    iamRoleStatements:
-      - Effect: "Allow"
-        Action:
-          - "dynamodb:Scan"
-        Resource: !GetAtt TodoTable.Arn
-  getTodoById:
-    handler: index.handler
-    name: handler
-    memorySize: 128 # mb
-    timeout: 5 # seconds
-    events:
-      - http:
+      - http: ## Get todos by id
           path: todo/{todoId}
           method: GET
-    iamRoleStatements:
-      - Effect: "Allow"
-        Action:
-          - "dynamodb:GetItem"
-        Resource: !GetAtt TodoTable.Arn
-  updateTodo:
-    handler: index.handler
-    name: handler
-    memorySize: 128 # mb
-    timeout: 5 # seconds
-    events:
-      - http:
-          path: todo/{todoId}
-          method: PUT
-    iamRoleStatements:
-      - Effect: "Allow"
-        Action:
-          - "dynamodb:UpdateItem"
-        Resource: !GetAtt TodoTable.Arn
-  createTodo:
-    handler: index.handler
-    name: handler
-    memorySize: 128 # mb
-    timeout: 5 # seconds
-    events:
-      - http:
+      - http: ## Create todo
           path: todo/
           method: POST
-    iamRoleStatements:
-      - Effect: "Allow"
-        Action:
-          - "dynamodb:PutItem"
-        Resource: !GetAtt TodoTable.Arn
-  deleteTodo:
-    handler: index.handler
-    name: handler
-    memorySize: 128 # mb
-    timeout: 5 # seconds
-    events:
-      - http:
+      - http: ## Update todo by todoId
+          path: todo/{todoId}
+          method: PUT
+      - http: ## Delete todo by todoId
           path: todo/{todoId}
           method: DELETE
     iamRoleStatements:
       - Effect: "Allow"
         Action:
+          - "dynamodb:Scan"
+          - "dynamodb:GetItem"
+          - "dynamodb:PutItem"
+          - "dynamodb:UpdateItem"
           - "dynamodb:DeleteItem"
         Resource: !GetAtt TodoTable.Arn
+  
 
 resources:
   Resources:

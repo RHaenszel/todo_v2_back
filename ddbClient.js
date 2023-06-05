@@ -1,5 +1,6 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 const REGION = "us-east-1";
+// Uncomment below for local dev
 // const ddbClient = new DynamoDBClient({ 
 //     region: REGION,
 //     accessKeyId: "123456789",
